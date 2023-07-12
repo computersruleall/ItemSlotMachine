@@ -437,9 +437,7 @@ public final class SlotMachine implements Nameable {
 
         CoinManager coinManager = plugin.getManager(CoinManager.class);
         int remaining = settings.coinAmount;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && coinManager.isCoin(item)) {
-                if (remaining == 0 || item.getAmount() >= remaining) {
+        if (vault.getBalance(player) >= remaining) {
                     return true;
                 }
                 remaining -= item.getAmount();
@@ -457,15 +455,10 @@ public final class SlotMachine implements Nameable {
         CoinManager coinManager = plugin.getManager(CoinManager.class);
         int remaining = settings.coinAmount;
         ItemStack[] invContents = player.getInventory().getContents();
-        for (int i = 0; i < invContents.length; i++) {
-            ItemStack item = invContents[i];
             if (item != null && coinManager.isCoin(item)) {
-                int amount = item.getAmount();
+                int amount = vault.getBalance(player);
                 if (amount > remaining) {
-                    item.setAmount(amount - remaining);
-                    break;
-                } else if (amount == remaining) {
-                    item.setType(Material.AIR);
+                    vault.withdrawPlayer(player, remaining);
                     break;
                 }
 
@@ -477,8 +470,6 @@ public final class SlotMachine implements Nameable {
 
                 invContents[i] = item;
             }
-        }
-        player.getInventory().setContents(invContents);
     }
 
     public void setMoneyPot(double moneyPot) {
