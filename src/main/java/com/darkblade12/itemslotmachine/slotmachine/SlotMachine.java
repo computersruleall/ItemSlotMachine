@@ -457,7 +457,7 @@ public final class SlotMachine implements Nameable {
         ItemStack[] invContents = player.getInventory().getContents();
             if (item != null && coinManager.isCoin(item)) {
                 int amount = vault.getBalance(player);
-                if (amount > remaining) {
+                if (amount >= remaining) {
                     vault.withdrawPlayer(player, remaining);
                     break;
                 }
